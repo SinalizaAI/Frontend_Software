@@ -185,3 +185,28 @@
   width: 28px;
   height: 28px;
 }
+
+.historico_label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.historico_lista {
+  overflow-y: auto;
+  height: calc(100% - 28px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.historico_item {
+  background-color: #f0f4f8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 16px;
+  color: #1a1a1a;
+  border-left: 3px solid #345f7a;
+}

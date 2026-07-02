@@ -9,20 +9,39 @@ function TradutorOuvinte() {
   const [textoVoz, setTextoVoz] = useState('')
   const [statusGravacao, setStatusGravacao] = useState('')
   const [textoDigitado, setTextoDigitado] = useState('')
+  const [historico, setHistorico] = useState([])
+  const [processando, setProcessando] = useState(false)
+
+  const gravando = statusGravacao === 'gravando'
 
   useEffect(() => {
     window.api.onFraseReconhecida((dado) => {
       setFraseReconhecida(dado)
+      setHistorico((prev) => {
+        if (prev[0] === dado) return prev
+        return [dado, ...prev]
+      })
     })
 
     window.api.onVozAtendente((dado) => {
       setTextoVoz(dado)
+      setProcessando(false)
     })
 
     window.api.onStatusGravacao((dado) => {
       setStatusGravacao(dado)
+      if (dado !== 'gravando') setProcessando(false)
     })
   }, [])
+
+  const iniciarGravacao = () => {
+    window.api.iniciarGravacao()
+  }
+
+  const pararGravacao = () => {
+    setProcessando(true)
+    window.api.pararGravacao()
+  }
 
   return (
     <div className={styles.container}>
@@ -33,7 +52,14 @@ function TradutorOuvinte() {
             value={fraseReconhecida || 'O resultado do sinal aparece aqui'}
             readOnly
           />
-          <div className={styles.historico}>HISTÓRICO:</div>
+          <div className={styles.historico}>
+            <span className={styles.historico_label}>HISTÓRICO:</span>
+            <div className={styles.historico_lista}>
+              {historico.map((frase, i) => (
+                <div key={i} className={styles.historico_item}>{frase}</div>
+              ))}
+            </div>
+          </div>
         </div>
         <div className={styles.coluna_direita}>
           <div className={styles.texto_digitado}>
@@ -74,18 +100,22 @@ function TradutorOuvinte() {
               <div className={styles.gravar}>
                 <button
                   className={styles.botao_gravacao}
-                  onClick={() => window.api.iniciarGravacao()}
+                  onClick={iniciarGravacao}
+                  disabled={gravando || processando}
                 >
                   <img src={microfone} alt="microfone" />
                 </button>
                 <button
                   className={styles.botao_microfone}
-                  onClick={() => window.api.pararGravacao()}
+                  onClick={pararGravacao}
+                  disabled={!gravando || processando}
                 >
                   <img src={stop} alt="stop" />
                 </button>
               </div>
-              <span className={styles.status}>{statusGravacao}</span>
+              <span className={styles.status}>
+                {processando ? 'transcrevendo...' : statusGravacao}
+              </span>
               <button
                 className={styles.botao}
                 onClick={() => {

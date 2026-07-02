@@ -9,7 +9,9 @@ const api = {
   pararGravacao: () => ipcRenderer.send('parar-gravacao'),
   onFrameCamera: (callback) => ipcRenderer.on('frame-camera', (_, dado) => callback(dado)),
   enviarRespostaOuvinte: (texto) => ipcRenderer.send('enviar-resposta-ouvinte', texto), 
-  onRespostaOuvinte: (callback) => ipcRenderer.on('resposta-ouvinte', (_, dado) => callback(dado)) 
+  onRespostaOuvinte: (callback) => ipcRenderer.on('resposta-ouvinte', (_, dado) => callback(dado)),
+  apagarUltimoSinal: () => ipcRenderer.send('apagar-ultimo-sinal'),
+  resetarFrase: () => ipcRenderer.send('resetar-frase'),
 }
 
 if (process.contextIsolated) {
